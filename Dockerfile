@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:11-jre-jammy
 
 RUN apt-get update && apt-get install -y \
     wget unzip curl openssl inotify-tools \
@@ -8,7 +8,7 @@ ENV OPENAS2_VERSION=2.11.1
 ENV OPENAS2_HOME=/opt/openas2
 
 RUN mkdir -p $OPENAS2_HOME && \
-    wget -q "https://github.com/OpenAS2/OpenAs2App/releases/download/v${OPENAS2_VERSION}/OpenAS2Server-${OPENAS2_VERSION}.zip" \
+    wget -q "https://github.com/OpenAS2/OpenAs2App/releases/download/v2.11.1/OpenAS2Server-2.11.1.zip" \
     -O /tmp/openas2.zip && \
     unzip -q /tmp/openas2.zip -d $OPENAS2_HOME && \
     rm /tmp/openas2.zip && \
