@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<partnerships>
+    <partner name="BUSINESSOS">
+        <attribute name="as2_id" value="{{AS2_SENDER_ID}}"/>
+        <attribute name="x509_alias" value="openas2"/>
+        <attribute name="email" value="anthony@runbusiness.com"/>
+    </partner>
+
+    <partner name="GEX_FEMA">
+        <attribute name="as2_id" value="{{AS2_RECEIVER_ID}}"/>
+        <attribute name="as2_url" value="{{GEX_AS2_URL}}"/>
+        <attribute name="x509_alias" value="gex_fema"/>
+        <attribute name="email" value="edi@dla.mil"/>
+    </partner>
+
+    <partnership name="GEX_FEMA-TO-BUSINESSOS">
+        <sender name="GEX_FEMA"/>
+        <receiver name="BUSINESSOS"/>
+        <attribute name="as2_mdn_options" value="signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1"/>
+        <attribute name="sign" value="sha1"/>
+        <attribute name="encrypt" value="3des"/>
+        <attribute name="resend_max_retries" value="3"/>
+    </partnership>
+
+    <partnership name="BUSINESSOS-TO-GEX_FEMA">
+        <sender name="BUSINESSOS"/>
+        <receiver name="GEX_FEMA"/>
+        <attribute name="as2_url" value="{{GEX_AS2_URL}}"/>
+        <attribute name="as2_mdn_options" value="signed-receipt-protocol=optional, pkcs7-signature; signed-receipt-micalg=optional, sha1"/>
+        <attribute name="sign" value="sha1"/>
+        <attribute name="encrypt" value="3des"/>
+        <attribute name="resend_max_retries" value="3"/>
+    </partnership>
+</partnerships>

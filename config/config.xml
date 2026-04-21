@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openas2>
+    <certificates classname="org.openas2.cert.PKCS12CertificateFactory"
+        filename="%home%/certs/as2_certs.jks"
+        password="{{CERT_PASSWORD}}"
+        interval="300"/>
+
+    <partnerships classname="org.openas2.partner.XMLPartnershipFactory"
+        filename="%home%/config/partnerships.xml"/>
+
+    <processor classname="org.openas2.processor.DefaultProcessor"
+        pendingmdnsufix="MDN">
+
+        <module classname="org.openas2.processor.receiver.AS2MDNReceiverModule"
+            port="4080"/>
+
+        <module classname="org.openas2.processor.receiver.AS2ReceiverModule"
+            port="4080"/>
+
+        <module classname="org.openas2.processor.storage.MessageFileModule"
+            filename="%home%/data/inbox/%$msg.headers.as2-from%-%date.MMDDYYYY%-%$msg.headers.message-id%.edi"
+            header="%home%/data/inbox/hdr-%$msg.headers.message-id%.txt"/>
+
+        <module classname="org.openas2.processor.sender.AS2SenderModule"
+            connecttimeout="60000"
+            readtimeout="60000"
+            retries="3"/>
+
+        <module classname="org.openas2.processor.storage.MDNFileModule"
+            filename="%home%/data/sent/mdn-%$mdn.headers.as2-from%-%date.MMDDYYYY%-%$mdn.headers.original-message-id%.mdn"/>
+
+        <module classname="org.openas2.processor.resender.DirectoryResenderModule"
+            resenddir="%home%/data/failed"
+            errordir="%home%/data/failed/error"
+            resenddelay="600000"/>
+    </processor>
+</openas2>
