@@ -1,32 +1,21 @@
-FROM eclipse-temurin:11-jre-jammy
+FROM node:22-slim
 
-RUN apt-get update && apt-get install -y \
-    wget unzip curl openssl inotify-tools \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
 
-ENV OPENAS2_VERSION=2.11.1
-ENV OPENAS2_HOME=/opt/openas2
+# Install openssl for certificate generation
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $OPENAS2_HOME && \
-    wget -q "https://github.com/OpenAS2/OpenAs2App/releases/download/v2.11.1/OpenAS2Server-2.11.1.zip" \
-    -O /tmp/openas2.zip && \
-    unzip -q /tmp/openas2.zip -d $OPENAS2_HOME && \
-    rm /tmp/openas2.zip && \
-    chmod +x $OPENAS2_HOME/bin/start-openas2.sh
+# Create required directories
+RUN mkdir -p /app/data/inbox /app/data/outbox /app/data/sent /app/data/failed /app/certs
 
-RUN mkdir -p $OPENAS2_HOME/data/inbox \
-    $OPENAS2_HOME/data/outbox \
-    $OPENAS2_HOME/data/sent \
-    $OPENAS2_HOME/data/failed \
-    $OPENAS2_HOME/certs
+# Copy application files
+COPY package.json ./
+RUN npm install --production
 
-COPY config/ $OPENAS2_HOME/config/
-COPY scripts/ $OPENAS2_HOME/scripts/
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-RUN chmod +x $OPENAS2_HOME/scripts/*.sh
+COPY server.js ./
+COPY entrypoint.sh ./
+RUN chmod +x entrypoint.sh
 
-EXPOSE 4080 4443
+EXPOSE 4080
 
-WORKDIR $OPENAS2_HOME
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
