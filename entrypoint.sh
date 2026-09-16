@@ -1,3 +1,2 @@
-#!/bin/bash
-echo "Starting AS2 Gateway..."
-node server.js
+#!/bin/sh
+exec node server.js

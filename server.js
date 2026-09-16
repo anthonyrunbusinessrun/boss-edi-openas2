@@ -1,17 +1,31 @@
 const express = require('express');
-const fetch = require('node-fetch');
+
 const app = express();
-const CONNECTOR = process.env.CONNECTOR_URL || 'https://boss-edi-connector-production.up.railway.app';
-app.use((req, res, next) => { res.setHeader('AS2-Version', '1.2'); next(); });
-app.post('/as2', (req, res) => {
-  let body = '';
-  req.on('data', c => body += c);
-  req.on('end', async () => {
-    console.log('AS2 received from:', req.headers['as2-from']);
-    try { await fetch(CONNECTOR + '/as2', { method: 'POST', headers: {...req.headers, host: undefined}, body }); } catch(e) { console.error(e.message); }
-    res.set('Disposition', 'automatic-action/MDN-sent-automatically; processed');
-    res.status(200).send('Message received');
-  });
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Cache-Control', 'no-store');
+  next();
 });
-app.get('/health', (req, res) => res.json({ status: 'online', service: 'BusinessOS AS2 Gateway', port: 4080 }));
-app.listen(4080, () => console.log('AS2 Gateway running on port 4080'));
+
+app.get('/health', (req, res) => res.json({
+  status: 'disabled',
+  service: 'Ray Land legacy AS2 endpoint',
+  reason: 'DAAS GEX confirmed the Ray Land pathway uses HTTPS on port 443',
+  version: '2.0.0',
+}));
+
+app.all('/as2', (req, res) => res.status(410).json({
+  success: false,
+  error: 'AS2 is not enabled for the Ray Land GEX pathway. Use the approved HTTPS endpoint.',
+}));
+
+app.use((req, res) => res.status(404).json({ success: false, error: 'Not found' }));
+
+if (require.main === module) {
+  const port = Number(process.env.PORT || 4080);
+  app.listen(port, '0.0.0.0', () => console.log(`Legacy AS2 placeholder listening on ${port}; AS2 disabled`));
+}
+
+module.exports = app;

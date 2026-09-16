@@ -1,13 +1,13 @@
 {
   "name": "boss-edi-openas2",
-  "version": "1.0.0",
-  "description": "BusinessOS AS2 Gateway — relays EDI messages between GEX and connector",
+  "version": "2.0.0",
+  "description": "Disabled legacy AS2 endpoint retained for future partner-specific implementation",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "node-fetch": "^2.7.0"
+    "express": "^4.19.2"
   }
 }
